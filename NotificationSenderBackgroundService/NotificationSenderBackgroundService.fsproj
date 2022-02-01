@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>dotnet-BackgroundService-1655608C-E7BC-44EF-9A96-1A2F5064D62F</UserSecretsId>
+    <UserSecretsId>dotnet-NotificationSenderBackgroundService-159EA13E-AB0F-418F-BD5E-492A0673FF66</UserSecretsId>
   </PropertyGroup>
 
   

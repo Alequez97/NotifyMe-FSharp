@@ -1,4 +1,4 @@
-namespace BackgroundService
+namespace NotificationSenderBackgroundService
 
 open System
 open System.Collections.Generic
