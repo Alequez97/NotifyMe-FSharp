@@ -1,4 +1,4 @@
-﻿namespace HtmlParser
+﻿namespace WebParser
 
 open System
 open System.Net.Http
@@ -6,25 +6,31 @@ open System.Net.Http
 module UrlParser =
     let isAbsoluteUrl(url: string) = url.Contains("http")
     
-    let getUrlSheme(url: string) = 
-        match isAbsoluteUrl url with
-        | true -> 
-            url.Split([|"://"|], StringSplitOptions.TrimEntries).[0]
-        | false -> ""
+    let getSheme(url: string): string option = 
+        match url.Contains("://") with
+        | true -> Some(url.Split([|"://"|], StringSplitOptions.TrimEntries).[0])
+        | false -> None
 
-    let getSubdomain(url: string) =
+    let getSubdomain(url: string): string option =
         let countChars(str: string, c: char) = str |> Seq.filter (fun x -> x = c) |> Seq.length
+        let getSubdomainHelper url = if countChars(url, '.') >= 2 then Some(url.Split('.').[0]) else None
         
-        match isAbsoluteUrl url with
+        match url.Contains("://") with
         | true ->
             let urlWithoutSchema = url.Split([|"://"|], StringSplitOptions.TrimEntries).[1]
-            if countChars(urlWithoutSchema, '.') >= 2 then urlWithoutSchema.Split('.').[0] else ""
-        | false -> ""
+            getSubdomainHelper urlWithoutSchema
+        | false -> getSubdomainHelper url
 
-    let getUrlHost url =
-        match isAbsoluteUrl url with
+    let getHostname(url: string) =
+        let subdomain = getSubdomain url
+        let removeSubdomain(url: string): string= 
+            match subdomain with
+            | Some(x) -> url.Replace(x + ".", "")
+            | None -> url
+
+        match url.Contains("://") with
         | true ->
-            let subdomain = getSubdomain url
             let urlWithoutSchema = url.Split([|"://"|], StringSplitOptions.TrimEntries).[1]
-            urlWithoutSchema.Replace(subdomain, "").Split('/').[0]
-        | false -> ""
+            (removeSubdomain urlWithoutSchema).Split('/').[0]
+        | false ->
+            (removeSubdomain url).Split('/').[0]
