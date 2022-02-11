@@ -16,6 +16,7 @@ let runTest functionToTest expectedList =
         "maps.yahoo.com/Riga"
         "megatel.lv/lietotajs"
         "/posts/123/"
+        ""
     ]
     let actualList = setupList |> List.map(fun x -> functionToTest x)
 
@@ -23,16 +24,16 @@ let runTest functionToTest expectedList =
 
 [<Test>]
 let ``Get scheme`` () = 
-    runTest UrlParser.getSheme [Some("https"); Some("https"); None; None; None] 
+    runTest UrlParser.getSheme [Some("https"); Some("https"); None; None; None; None] 
 
 [<Test>]
 let ``Get subdomain`` () = 
-    runTest UrlParser.getSubdomain [Some("www"); None; Some("maps"); None; None]
+    runTest UrlParser.getSubdomain [Some("www"); None; Some("maps"); None; None; None]
 
 [<Test>]
 let ``Get host name`` () = 
-    runTest UrlParser.getHostname [Some("google.com"); Some("yandex.ru"); Some("yahoo.com"); Some("megatel.lv"); None]
+    runTest UrlParser.getHostname [Some("google.com"); Some("yandex.ru"); Some("yahoo.com"); Some("megatel.lv"); None; None]
 
 [<Test>]
 let ``Is absolute url`` () = 
-    runTest UrlParser.isAbsoluteUrl [true; true; true; true; false]
+    runTest UrlParser.isAbsoluteUrl [true; true; true; true; false; false]
