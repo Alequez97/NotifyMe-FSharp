@@ -7,7 +7,7 @@ open WebParser
 let Setup () =
     ()
 
-let runTest expectedList functionToTest = 
+let runTest functionToTest expectedList = 
     let errorMessage expected actual = sprintf "Expected %A but was %A" expected actual
     
     let setupList = [
@@ -15,16 +15,24 @@ let runTest expectedList functionToTest =
         "https://yandex.ru/home"
         "maps.yahoo.com/Riga"
         "megatel.lv/lietotajs"
+        "/posts/123/"
     ]
     let actualList = setupList |> List.map(fun x -> functionToTest x)
 
     Assert.AreEqual(expectedList, actualList, errorMessage expectedList actualList)
 
 [<Test>]
-let ``Get scheme`` () = runTest [Some("https"); Some("https"); None; None] UrlParser.getSheme
+let ``Get scheme`` () = 
+    runTest UrlParser.getSheme [Some("https"); Some("https"); None; None; None] 
 
 [<Test>]
-let ``Get subdomain`` () = runTest [Some("www"); None; Some("maps"); None] UrlParser.getSubdomain
+let ``Get subdomain`` () = 
+    runTest UrlParser.getSubdomain [Some("www"); None; Some("maps"); None; None]
 
 [<Test>]
-let ``Get host name `` () = runTest ["google.com"; "yandex.ru"; "yahoo.com"; "megatel.lv"] UrlParser.getHostname
+let ``Get host name`` () = 
+    runTest UrlParser.getHostname [Some("google.com"); Some("yandex.ru"); Some("yahoo.com"); Some("megatel.lv"); None]
+
+[<Test>]
+let ``Is absolute url`` () = 
+    runTest UrlParser.isAbsoluteUrl [true; true; true; true; false]

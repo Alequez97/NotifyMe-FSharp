@@ -2,10 +2,9 @@
 
 open System
 open System.Net.Http
+open System
 
 module UrlParser =
-    let isAbsoluteUrl(url: string) = url.Contains("http")
-    
     let getSheme(url: string): string option = 
         match url.Contains("://") with
         | true -> Some(url.Split([|"://"|], StringSplitOptions.TrimEntries).[0])
@@ -21,7 +20,7 @@ module UrlParser =
             getSubdomainHelper urlWithoutSchema
         | false -> getSubdomainHelper url
 
-    let getHostname(url: string) =
+    let getHostname(url: string): string option =
         let subdomain = getSubdomain url
         let removeSubdomain(url: string): string= 
             match subdomain with
@@ -31,6 +30,10 @@ module UrlParser =
         match url.Contains("://") with
         | true ->
             let urlWithoutSchema = url.Split([|"://"|], StringSplitOptions.TrimEntries).[1]
-            (removeSubdomain urlWithoutSchema).Split('/').[0]
+            let result = (removeSubdomain urlWithoutSchema).Split('/').[0]
+            if String.IsNullOrEmpty(result) then None else Some(result)
         | false ->
-            (removeSubdomain url).Split('/').[0]
+            let result = (removeSubdomain url).Split('/').[0]
+            if String.IsNullOrEmpty(result) then None else Some(result)
+
+    let isAbsoluteUrl(url: string) = getHostname url |> Option.isSome
